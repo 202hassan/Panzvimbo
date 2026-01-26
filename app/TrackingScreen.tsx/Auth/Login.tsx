@@ -35,7 +35,7 @@ export default function Login() {
       setLoading(false)
       // Navigate based on user type
       if (mockUser.userType === 'client') {
-        router.replace('/screens/client/HomeScreen')
+        router.replace('/(tabs)')
       } else {
         router.replace('/TrackingScreen.tsx/courier/CourierHome')
       }

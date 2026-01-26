@@ -14,7 +14,7 @@ export default function Index() {
       // Check authentication and redirect after splash
       if (isAuthenticated && currentUser) {
         if (currentUser.userType === 'client') {
-          router.replace('/screens/client/HomeScreen')
+          router.replace('/(tabs)')
         } else {
           router.replace('/TrackingScreen.tsx/courier/CourierHome')
         }

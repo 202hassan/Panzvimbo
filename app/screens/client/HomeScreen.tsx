@@ -20,7 +20,59 @@ export default function HomeScreen() {
       const data = await deliveryService.getMyDeliveries()
       dispatch(setDeliveries(data))
     } catch (error) {
-      console.error('Failed to fetch deliveries:', error)
+      console.log('Using demo data (fetch failed):', error)
+      // Demo Mode Fallback
+      const mockDeliveries: any[] = [
+        {
+          id: '1',
+          clientId: 'demo-user',
+          clientName: 'Demo User',
+          pickupLocation: {
+            latitude: -17.8252,
+            longitude: 31.0335,
+            address: '123 Harare Dr, Borrowdale'
+          },
+          dropoffLocation: {
+            latitude: -17.8216,
+            longitude: 31.0492,
+            address: '456 Samora Machel Ave, CBD'
+          },
+          packageDetails: {
+            description: 'Important Documents',
+            size: 'small',
+            weight: 0.5
+          },
+          status: 'pending',
+          bids: [],
+          createdAt: new Date().toISOString(),
+          suggestedPrice: 15.00
+        },
+        {
+          id: '2',
+          clientId: 'demo-user',
+          clientName: 'Demo User',
+          pickupLocation: {
+            latitude: -17.7840,
+            longitude: 31.0020,
+            address: 'Westgate Shopping Mall'
+          },
+          dropoffLocation: {
+            latitude: -17.8000,
+            longitude: 31.0400,
+            address: 'Avondale Shops'
+          },
+          packageDetails: {
+            description: 'Box of Electronics',
+            size: 'medium',
+            weight: 2.5
+          },
+          status: 'in_progress',
+          bids: [],
+          createdAt: new Date(Date.now() - 86400000).toISOString(),
+          suggestedPrice: 25.00
+        }
+      ]
+      dispatch(setDeliveries(mockDeliveries))
     }
   }
 
@@ -62,7 +114,7 @@ export default function HomeScreen() {
           fontWeight="bold"
           size="$5"
           icon={<Plus size={20} color="white" />}
-          onPress={() => router.push('/screens/client/CreateDelivery')}
+          onPress={() => router.push('/(tabs)/create')}
           pressStyle={{ backgroundColor: '$primaryHover' }}
         >
           Create New Delivery

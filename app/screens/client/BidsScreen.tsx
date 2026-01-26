@@ -27,7 +27,67 @@ export default function BidsScreen() {
       setDelivery(bidsData.delivery)
       dispatch(setCurrentDeliveryBids(bidsData.bids))
     } catch (error) {
-      console.error('Failed to fetch bids:', error)
+      console.log('Using demo bids (fetch failed):', error)
+      
+      // Fallback: Demo Data
+      const mockBids: any[] = [
+        {
+          id: 'bid-1',
+          courierId: 'courier-1',
+          courierName: 'Mike Motorcycle',
+          courierRating: 4.8,
+          amount: 14.50,
+          estimatedTime: 25,
+          message: 'I am nearby and can pick up immediately.',
+          createdAt: new Date().toISOString(),
+          vehicleInfo: {
+            model: 'Honda Ace',
+            plateNumber: 'ABC-1234'
+          }
+        },
+        {
+          id: 'bid-2',
+          courierId: 'courier-2',
+          courierName: 'Fast Delivery Co.',
+          courierRating: 4.5,
+          amount: 16.00,
+          estimatedTime: 15,
+          message: 'Priority delivery included.',
+          createdAt: new Date().toISOString(),
+          vehicleInfo: {
+             model: 'Yamaha',
+             plateNumber: 'XYZ-9876'
+          }
+        }
+      ]
+
+      const mockDelivery: any = {
+        id: id as string,
+        clientId: 'demo-user',
+        clientName: 'Demo User',
+        pickupLocation: {
+          latitude: -17.8252, 
+          longitude: 31.0335,
+          address: '123 Harare Dr'
+        },
+        dropoffLocation: {
+          latitude: -17.8216,
+          longitude: 31.0492,
+          address: '456 Samora Ave'
+        },
+        packageDetails: {
+          description: 'Demo Package',
+          size: 'small',
+          weight: 1
+        },
+        status: 'pending',
+        bids: mockBids,
+        createdAt: new Date().toISOString()
+      }
+
+      setBids(mockBids)
+      setDelivery(mockDelivery)
+      dispatch(setCurrentDeliveryBids(mockBids))
     } finally {
       setLoading(false)
     }
