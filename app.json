@@ -1,0 +1,44 @@
+{
+  "expo": {
+    "name": "Panzvimbo",
+    "slug": "panzvimbo",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./app/assets/panzvimbo logo.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./app/assets/panzvimbo logo.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#1a3a2e"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.panzvimbo.app"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./app/assets/panzvimbo logo.png",
+        "backgroundColor": "#1a3a2e"
+      },
+      "package": "com.panzvimbo.app",
+      "permissions": [
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_COARSE_LOCATION"
+      ]
+    },
+    "web": {
+      "favicon": "./app/assets/panzvimbo logo.png"
+    },
+    "newArchEnabled": false,
+    "plugins": [
+      "expo-router",
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "Allow Panzvimbo to use your location for deliveries."
+        }
+      ]
+    ],
+    "scheme": "panzvimbo"
+  }
+}
