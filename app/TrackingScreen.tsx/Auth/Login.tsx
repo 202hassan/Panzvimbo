@@ -15,28 +15,31 @@ export default function Login() {
   const [loading, setLoading] = useState(false)
 
   const handleLogin = async () => {
-    if (!email || !password) {
-      Alert.alert('Error', 'Please fill in all fields')
-      return
-    }
-
+    // Skip validation - allow login without credentials
     setLoading(true)
-    try {
-      const response = await authService.login({ email, password })
-      dispatch(setUser(response.user))
-      dispatch(setToken(response.token))
-
+    
+    // Mock user data for quick access
+    const mockUser = {
+      id: 'demo-user',
+      name: 'Demo User',
+      email: email || 'demo@panzvimbo.com',
+      userType: 'client' // Change to 'courier' if you want courier view
+    }
+    
+    const mockToken = 'demo-token-' + Date.now()
+    
+    dispatch(setUser(mockUser))
+    dispatch(setToken(mockToken))
+    
+    setTimeout(() => {
+      setLoading(false)
       // Navigate based on user type
-      if (response.user.userType === 'client') {
+      if (mockUser.userType === 'client') {
         router.replace('/screens/client/HomeScreen')
       } else {
         router.replace('/TrackingScreen.tsx/courier/CourierHome')
       }
-    } catch (error: any) {
-      Alert.alert('Login Failed', error.toString())
-    } finally {
-      setLoading(false)
-    }
+    }, 500)
   }
 
   return (
