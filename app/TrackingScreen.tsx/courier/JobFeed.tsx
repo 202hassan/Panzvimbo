@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { FlatList, RefreshControl, Alert, TextInput } from 'react-native'
 import { YStack, Text, Card, XStack, Button, Dialog } from 'tamagui'
-import { Search, Filter } from '@tamagui/lucide-icons'
+import { Search, Filter, ChevronLeft } from '@tamagui/lucide-icons'
 import { useRouter } from 'expo-router'
 import { useDispatch, useSelector } from 'react-redux'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
@@ -195,11 +195,21 @@ export default function JobFeed() {
 
   return (
     <YStack flex={1} backgroundColor="$background" paddingTop={insets.top}>
-      {/* Header */}
+      {/* Header with Back Button */}
       <YStack paddingHorizontal="$4" paddingTop="$4" paddingBottom="$4" space="$3">
-        <Text fontSize="$8" fontWeight="bold">
-          Available Jobs
-        </Text>
+        <XStack alignItems="center" space="$2">
+          <Button
+            icon={<ChevronLeft size={24} color="#FF6B35" />}
+            backgroundColor="transparent"
+            onPress={() => router.back()}
+            padding="$0"
+            width={40}
+            height={40}
+          />
+          <Text fontSize="$8" fontWeight="bold">
+            Available Jobs
+          </Text>
+        </XStack>
 
         {/* Search Bar */}
         <XStack space="$2" alignItems="center">

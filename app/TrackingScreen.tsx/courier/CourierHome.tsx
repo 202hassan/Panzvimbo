@@ -137,7 +137,7 @@ export default function CourierHome() {
                   backgroundColor="$primary"
                   color="white"
                   fontWeight="bold"
-                  onPress={() => router.push('/TrackingScreen.tsx/courier/JobFeed')}
+                  onPress={() => router.push('/(rider)/jobs')}
                   pressStyle={{ backgroundColor: '$primaryHover' }}
                 >
                   Browse Jobs
@@ -163,7 +163,7 @@ export default function CourierHome() {
                   backgroundColor="$secondary"
                   color="white"
                   fontWeight="bold"
-                  onPress={() => router.push('/TrackingScreen.tsx/courier/BidScreen')}
+                  onPress={() => router.push('/(rider)/bids')}
                 >
                   View My Bids
                 </Button>

@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import { FlatList, RefreshControl } from 'react-native'
-import { YStack, Text, Card, XStack } from 'tamagui'
-import { Clock, CheckCircle, XCircle } from '@tamagui/lucide-icons'
+import { YStack, Text, Card, XStack, Button } from 'tamagui'
+import { Clock, CheckCircle, XCircle, ChevronLeft } from '@tamagui/lucide-icons'
+import { useRouter } from 'expo-router'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { deliveryService } from '../../_services/deliverySlice'
 import { Bid } from '../../_store/deliverySlice'
@@ -15,6 +16,7 @@ interface BidWithDelivery extends Bid {
 }
 
 export default function BidScreen() {
+  const router = useRouter()
   const insets = useSafeAreaInsets()
   const [bids, setBids] = useState<BidWithDelivery[]>([])
   const [refreshing, setRefreshing] = useState(false)
@@ -99,15 +101,31 @@ export default function BidScreen() {
 
   return (
     <YStack flex={1} backgroundColor="$background" paddingTop={insets.top}>
-      {/* Header */}
-      <YStack paddingHorizontal="$4" paddingTop="$4" paddingBottom="$4">
-        <Text fontSize="$8" fontWeight="bold">
-          My Bids
-        </Text>
-        <Text fontSize="$4" color="$accent">
-          Track your active and past bids
-        </Text>
-      </YStack>
+      {/* Header with Back Button */}
+      <XStack
+        paddingHorizontal="$4"
+        paddingTop="$4"
+        paddingBottom="$4"
+        alignItems="center"
+        space="$2"
+      >
+        <Button
+          icon={<ChevronLeft size={24} color="#2dbe60" />}
+          backgroundColor="transparent"
+          onPress={() => router.back()}
+          padding="$0"
+          width={40}
+          height={40}
+        />
+        <YStack>
+          <Text fontSize="$8" fontWeight="bold">
+            My Bids
+          </Text>
+          <Text fontSize="$4" color="$accent">
+            Track your active and past bids
+          </Text>
+        </YStack>
+      </XStack>
 
       {/* Bids List */}
       {bids.length > 0 ? (
