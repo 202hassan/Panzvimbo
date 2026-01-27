@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'expo-router'
 import { useSelector } from 'react-redux'
-import { RootState } from './store'
+import { RootState } from './_store'
 import SplashScreen from './screens/SplashScreen'
 
 export default function Index() {

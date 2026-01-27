@@ -1,7 +1,7 @@
 import React from 'react'
 import { Card, XStack, YStack, Text, Button } from 'tamagui'
 import { MapPin, Package, DollarSign, Clock } from '@tamagui/lucide-icons'
-import { Delivery } from '../store/deliverySlice'
+import { Delivery } from '../_store/deliverySlice'
 
 interface JobCardProps {
   delivery: Delivery
@@ -117,6 +117,11 @@ export default function JobCard({ delivery, onBid, onViewDetails }: JobCardProps
         {/* Action Button */}
         {onBid && delivery.status === 'pending' && (
           <Button
+            width="100%"
+            height={42}
+            paddingVertical={10}
+            paddingHorizontal={16}
+            fontSize={14}
             backgroundColor="$primary"
             color="white"
             fontWeight="bold"

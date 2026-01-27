@@ -1,18 +1,20 @@
 import React, { useEffect, useState } from 'react'
 import { FlatList, Alert } from 'react-native'
-import { YStack, XStack, Text, Card } from 'tamagui'
-import { Clock, TrendingUp } from '@tamagui/lucide-icons'
+import { YStack, XStack, Text, Card, Button } from 'tamagui'
+import { Clock, TrendingUp, ChevronLeft } from '@tamagui/lucide-icons'
 import { useLocalSearchParams, useRouter } from 'expo-router'
 import { useDispatch } from 'react-redux'
-import { deliveryService } from '../../services/deliverySlice'
-import { setCurrentDeliveryBids, acceptBid as acceptBidAction } from '../../store/deliverySlice'
-import { Bid, Delivery } from '../../store/deliverySlice'
-import BidCard from '../../components/BidCard'
-import DeliveryMapView from '../../components/MapView'
+import { deliveryService } from '../../_services/deliverySlice'
+import { setCurrentDeliveryBids, acceptBid as acceptBidAction } from '../../_store/deliverySlice'
+import { Bid, Delivery } from '../../_store/deliverySlice'
+import BidCard from '../../_components/BidCard'
+import DeliveryMapView from '../../_components/MapView'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 export default function BidsScreen() {
   const { id } = useLocalSearchParams()
   const router = useRouter()
+  const insets = useSafeAreaInsets()
   const dispatch = useDispatch()
   const [delivery, setDelivery] = useState<Delivery | null>(null)
   const [bids, setBids] = useState<Bid[]>([])
@@ -141,6 +143,26 @@ export default function BidsScreen() {
 
   return (
     <YStack flex={1} backgroundColor="$background">
+      {/* Header */}
+      <XStack 
+        paddingHorizontal="$4" 
+        paddingTop={insets.top + 16}
+        paddingBottom="$2" 
+        alignItems="center" 
+        space="$3" 
+        backgroundColor="$background"
+        zIndex={10}
+      >
+        <Button 
+          icon={<ChevronLeft size={24} color="$color" />} 
+          size="$4" 
+          circular 
+          chromeless 
+          onPress={() => router.back()} 
+        />
+        <Text fontSize="$6" fontWeight="bold">Delivery Details</Text>
+      </XStack>
+
       {/* Map View */}
       <YStack height={250}>
         <DeliveryMapView

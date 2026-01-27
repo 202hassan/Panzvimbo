@@ -1,13 +1,13 @@
 import React from 'react'
-import { YStack, XStack, Text, Button, Avatar, Card, Separator, Switch } from 'tamagui'
-import { Settings, LogOut, ChevronRight, User, MapPin, CreditCard, Bike } from '@tamagui/lucide-icons'
+import { YStack, XStack, Text, Button, Avatar, Card, Separator } from 'tamagui'
+import { Settings, LogOut, ChevronRight, User, MapPin, CreditCard, Bike, Zap } from '@tamagui/lucide-icons'
 import { useRouter } from 'expo-router'
 import { useDispatch, useSelector } from 'react-redux'
 import { RootState } from '../_store'
 import { logout, setUser } from '../_store/userSlice'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
-export default function ProfileScreen() {
+export default function RiderProfileScreen() {
   const router = useRouter()
   const dispatch = useDispatch()
   const user = useSelector((state: RootState) => state.user.currentUser)
@@ -31,15 +31,21 @@ export default function ProfileScreen() {
     if (newType === 'client') {
        router.replace('/(tabs)')
     } else {
-       // Navigate to Courier Home
+       // Navigate to Rider Home
        router.replace('/(rider)')
     }
   }
 
+  const riderStats = [
+    { label: 'Completed Deliveries', value: '24', icon: Zap, color: '#2dbe60' },
+    { label: 'Average Rating', value: '4.8', icon: User, color: '#FF6B35' },
+    { label: 'Earnings This Week', value: '$128.50', icon: CreditCard, color: '#2dbe60' },
+  ]
+
   const menuItems = [
     { icon: User, label: 'Personal Information', sub: 'Edit your details' },
     { icon: MapPin, label: 'Saved Addresses', sub: 'Home, Work, etc.' },
-    { icon: CreditCard, label: 'Payment Methods', sub: 'Visa, EcoCash' },
+    { icon: CreditCard, label: 'Payment Methods', sub: 'Bank Account Details' },
     { icon: Settings, label: 'Settings', sub: 'Notifications, Language' },
   ]
 
@@ -49,10 +55,10 @@ export default function ProfileScreen() {
       <YStack alignItems="center" space="$2" marginTop="$2">
         <Avatar circular size="$10">
           <Avatar.Image src="https://i.pravatar.cc/300" />
-          <Avatar.Fallback backgroundColor="$primary" />
+          <Avatar.Fallback backgroundColor="#2dbe60" />
         </Avatar>
         <Text fontSize="$6" fontWeight="bold">
-          {user?.name || 'Demo User'}
+          {user?.name || 'Demo Rider'}
         </Text>
         <Text fontSize="$4" color="$accent">
           {user?.email || 'demo@panzvimbo.com'}
@@ -63,32 +69,57 @@ export default function ProfileScreen() {
           marginTop="$4" 
           padding="$3" 
           bordered 
-          borderColor="$primary" 
+          borderColor="#2dbe60"
           pressStyle={{ scale: 0.98 }}
           onPress={handleSwitchMode}
-          backgroundColor={user?.userType === 'client' ? '$blueLight' : '$primaryLight'}
-          theme="light" // Force light theme for this card
+          backgroundColor="#e8f5e9"
+          theme="light"
         >
           <XStack alignItems="center" space="$3">
-            <Bike size={24} color={user?.userType === 'client' ? '$blue' : '$primary'} />
-            <Text fontWeight="bold" color="$color">
-              Switch to {user?.userType === 'client' ? 'Rider' : 'Client'} Mode
+            <Bike size={24} color="#2dbe60" />
+            <Text fontWeight="bold" color="#1b5e20">
+              Switch to Client Mode
             </Text>
-            <ChevronRight size={20} color="$color" />
+            <ChevronRight size={20} color="#2dbe60" />
           </XStack>
         </Card>
       </YStack>
 
       <Separator marginVertical="$2" />
 
+      {/* Stats Cards */}
+      <YStack space="$2">
+        <Text fontSize="$4" fontWeight="bold" paddingLeft="$2">Your Stats</Text>
+        <XStack space="$2" flex={1} justifyContent="space-between">
+          {riderStats.map((stat, index) => (
+            <Card key={index} flex={1} padding="$3" backgroundColor="$cardBackground" borderRadius="$3">
+              <YStack alignItems="center" space="$2">
+                <YStack backgroundColor="$background" padding="$2" borderRadius="$2">
+                  <stat.icon size={18} color={stat.color} />
+                </YStack>
+                <Text fontSize="$5" fontWeight="bold" textAlign="center">
+                  {stat.value}
+                </Text>
+                <Text fontSize="$2" color="$accent" textAlign="center" numberOfLines={2}>
+                  {stat.label}
+                </Text>
+              </YStack>
+            </Card>
+          ))}
+        </XStack>
+      </YStack>
+
+      <Separator marginVertical="$2" />
+
       {/* Menu Options */}
       <YStack space="$3">
+        <Text fontSize="$4" fontWeight="bold" paddingLeft="$2">Account</Text>
         {menuItems.map((item, index) => (
           <Card key={index} padding="$4" pressStyle={{ scale: 0.98 }} backgroundColor="$cardBackground">
             <XStack alignItems="center" justifyContent="space-between">
               <XStack alignItems="center" space="$3">
                 <YStack backgroundColor="$background" padding="$2" borderRadius="$2">
-                  <item.icon size={20} color="#FF6B35" />
+                  <item.icon size={20} color="#2dbe60" />
                 </YStack>
                 <YStack>
                   <Text fontSize="$4" fontWeight="bold">{item.label}</Text>
@@ -103,6 +134,11 @@ export default function ProfileScreen() {
 
       <YStack flex={1} justifyContent="flex-end" paddingBottom="$4">
         <Button
+          width="100%"
+          height={50}
+          paddingVertical={12}
+          paddingHorizontal={20}
+          fontSize={16}
           backgroundColor="#FF3B30"
           color="white"
           icon={<LogOut size={18} />}

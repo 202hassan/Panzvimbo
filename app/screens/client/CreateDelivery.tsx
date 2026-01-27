@@ -1,16 +1,18 @@
 import React, { useState } from 'react'
-import { ScrollView, Alert } from 'react-native'
-import { YStack, XStack, Text, Input, Button, Card, Select } from 'tamagui'
+import { ScrollView, Alert, TextInput } from 'react-native'
+import { YStack, XStack, Text, Button, Card, Select } from 'tamagui'
 import { MapPin, Package, DollarSign, ChevronDown } from '@tamagui/lucide-icons'
 import { useRouter } from 'expo-router'
 import { useDispatch } from 'react-redux'
-import { addDelivery } from '../../store/deliverySlice'
-import { deliveryService, CreateDeliveryData } from '../../services/deliverySlice'
+import { addDelivery } from '../../_store/deliverySlice'
+import { deliveryService, CreateDeliveryData } from '../../_services/deliverySlice'
 import * as Location from 'expo-location'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 export default function CreateDelivery() {
   const router = useRouter()
   const dispatch = useDispatch()
+  const insets = useSafeAreaInsets()
   const [loading, setLoading] = useState(false)
 
   const [formData, setFormData] = useState<CreateDeliveryData>({
@@ -89,7 +91,7 @@ export default function CreateDelivery() {
 
   return (
     <ScrollView style={{ flex: 1, backgroundColor: '#fff' }}>
-      <YStack padding="$4" space="$4">
+      <YStack padding="$4" space="$4" paddingTop={insets.top + 16} paddingBottom={insets.bottom + 100}>
         <Text fontSize="$8" fontWeight="bold">
           Create Delivery
         </Text>
@@ -103,7 +105,7 @@ export default function CreateDelivery() {
                 Pickup Location
               </Text>
             </XStack>
-            <Input
+            <TextInput
               placeholder="Enter pickup address"
               value={formData.pickupLocation.address}
               onChangeText={(text: string) =>
@@ -112,9 +114,21 @@ export default function CreateDelivery() {
                   pickupLocation: { ...prev.pickupLocation, address: text },
                 }))
               }
+              style={{
+                borderWidth: 1,
+                borderColor: '#ddd',
+                borderRadius: 8,
+                padding: 12,
+                fontSize: 16,
+                color: '#000',
+              }}
+              placeholderTextColor="#999"
             />
             <Button
-              size="$3"
+              height={40}
+              paddingVertical={8}
+              paddingHorizontal={12}
+              fontSize={14}
               backgroundColor="$secondary"
               onPress={() => getCurrentLocation('pickup')}
             >
@@ -132,19 +146,30 @@ export default function CreateDelivery() {
                 Dropoff Location
               </Text>
             </XStack>
-            <Input
+            <TextInput
               placeholder="Enter dropoff address"
               value={formData.dropoffLocation.address}
               onChangeText={(text: string) =>
-
                 setFormData((prev) => ({
                   ...prev,
                   dropoffLocation: { ...prev.dropoffLocation, address: text },
                 }))
               }
+              style={{
+                borderWidth: 1,
+                borderColor: '#ddd',
+                borderRadius: 8,
+                padding: 12,
+                fontSize: 16,
+                color: '#000',
+              }}
+              placeholderTextColor="#999"
             />
             <Button
-              size="$3"
+              height={40}
+              paddingVertical={8}
+              paddingHorizontal={12}
+              fontSize={14}
               backgroundColor="$secondary"
               onPress={() => getCurrentLocation('dropoff')}
             >
@@ -162,10 +187,10 @@ export default function CreateDelivery() {
                 Package Details
               </Text>
             </XStack>
-            <Input
+            <TextInput
               placeholder="What are you sending?"
               value={formData.packageDetails.description}
-            onChangeText={(text: string) =>
+              onChangeText={(text: string) =>
                 setFormData((prev) => ({
                   ...prev,
                   packageDetails: { ...prev.packageDetails, description: text },
@@ -173,6 +198,16 @@ export default function CreateDelivery() {
               }
               multiline
               numberOfLines={3}
+              style={{
+                borderWidth: 1,
+                borderColor: '#ddd',
+                borderRadius: 8,
+                padding: 12,
+                fontSize: 16,
+                color: '#000',
+                textAlignVertical: 'top',
+              }}
+              placeholderTextColor="#999"
             />
 
             <YStack space="$2">
@@ -182,7 +217,10 @@ export default function CreateDelivery() {
                   <Button
                     key={size}
                     flex={1}
-                    size="$3"
+                    height={38}
+                    paddingVertical={8}
+                    paddingHorizontal={12}
+                    fontSize={13}
                     backgroundColor={
                       formData.packageDetails.size === size ? '$primary' : '$cardBackground'
                     }
@@ -203,7 +241,7 @@ export default function CreateDelivery() {
               </XStack>
             </YStack>
 
-            <Input
+            <TextInput
               placeholder="Weight (kg) - optional"
               keyboardType="numeric"
               onChangeText={(text: string) =>
@@ -215,6 +253,15 @@ export default function CreateDelivery() {
                   },
                 }))
               }
+              style={{
+                borderWidth: 1,
+                borderColor: '#ddd',
+                borderRadius: 8,
+                padding: 12,
+                fontSize: 16,
+                color: '#000',
+              }}
+              placeholderTextColor="#999"
             />
           </YStack>
         </Card>
@@ -231,23 +278,36 @@ export default function CreateDelivery() {
             <Text fontSize="$3" color="$accent">
               Couriers can bid above or below this amount
             </Text>
-            <Input
+            <TextInput
               placeholder="Enter amount in $"
               keyboardType="numeric"
               value={formData.suggestedPrice?.toString()}
-            onChangeText={(text: string) =>
+              onChangeText={(text: string) =>
                 setFormData((prev) => ({
                   ...prev,
                   suggestedPrice: text ? parseFloat(text) : undefined,
                 }))
               }
+              style={{
+                borderWidth: 1,
+                borderColor: '#ddd',
+                borderRadius: 8,
+                padding: 12,
+                fontSize: 16,
+                color: '#000',
+              }}
+              placeholderTextColor="#999"
             />
           </YStack>
         </Card>
 
         {/* Submit Button */}
         <Button
-          size="$5"
+          width="100%"
+          height={50}
+          paddingVertical={12}
+          paddingHorizontal={20}
+          fontSize={16}
           backgroundColor="$primary"
           color="white"
           fontWeight="bold"

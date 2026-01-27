@@ -3,10 +3,10 @@ import { Alert } from 'react-native'
 import { YStack, XStack, Text, Button, Card } from 'tamagui'
 import { MapPin, User, Phone, Navigation } from '@tamagui/lucide-icons'
 import { useSelector, useDispatch } from 'react-redux'
-import { RootState } from '../../store'
-import { setActiveDelivery } from '../../store/deliverySlice'
-import { deliveryService } from '../../services/deliverySlice'
-import DeliveryMapView from '../../components/MapView'
+import { RootState } from '../../_store'
+import { setActiveDelivery } from '../../_store/deliverySlice'
+import { deliveryService } from '../../_services/deliverySlice'
+import DeliveryMapView from '../../_components/MapView'
 import * as Location from 'expo-location'
 
 export default function ActiveDelivery() {
@@ -120,6 +120,11 @@ export default function ActiveDelivery() {
               </Text>
             </XStack>
             <Button
+              width="100%"
+              height={44}
+              paddingVertical={10}
+              paddingHorizontal={16}
+              fontSize={14}
               backgroundColor="$secondary"
               color="white"
               icon={<Phone size={18} color="white" />}
@@ -176,7 +181,11 @@ export default function ActiveDelivery() {
         <YStack space="$3">
           {activeDelivery.status === 'accepted' && (
             <Button
-              size="$5"
+              width="100%"
+              height={50}
+              paddingVertical={12}
+              paddingHorizontal={20}
+              fontSize={16}
               backgroundColor="$primary"
               color="white"
               fontWeight="bold"
@@ -188,7 +197,11 @@ export default function ActiveDelivery() {
 
           {activeDelivery.status === 'in_progress' && (
             <Button
-              size="$5"
+              width="100%"
+              height={50}
+              paddingVertical={12}
+              paddingHorizontal={20}
+              fontSize={16}
               backgroundColor="$green10"
               color="white"
               fontWeight="bold"

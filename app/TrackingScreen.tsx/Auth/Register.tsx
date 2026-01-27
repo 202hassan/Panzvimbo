@@ -1,11 +1,11 @@
 import React, { useState } from 'react'
-import { Alert, ScrollView, KeyboardAvoidingView, Platform, Image } from 'react-native'
-import { YStack, XStack, Text, Input, Button, Card } from 'tamagui'
+import { Alert, ScrollView, KeyboardAvoidingView, Platform, Image, TextInput } from 'react-native'
+import { YStack, XStack, Text, Button, Card } from 'tamagui'
 import { User, Mail, Phone, Lock } from '@tamagui/lucide-icons'
 import { useRouter } from 'expo-router'
 import { useDispatch } from 'react-redux'
-import { setUser, setToken } from '../../store/userSlice'
-import { authService, RegisterData } from '../../services/authService'
+import { setUser, setToken } from '../../_store/userSlice'
+import { authService, RegisterData } from '../../_services/authService'
 
 export default function Register() {
   const router = useRouter()
@@ -100,21 +100,27 @@ export default function Register() {
               <XStack space="$3">
                 <Button
                   flex={1}
-                  size="$4"
+                  height={44}
+                  paddingVertical={10}
+                  paddingHorizontal={16}
                   backgroundColor={userType === 'client' ? '$primary' : '$background'}
                   color={userType === 'client' ? 'white' : '$secondary'}
-                  onPress={() => setUserType('client')}
+                  fontSize={14}
                   fontWeight="bold"
+                  onPress={() => setUserType('client')}
                 >
                   Send Packages
                 </Button>
                 <Button
                   flex={1}
-                  size="$4"
+                  height={44}
+                  paddingVertical={10}
+                  paddingHorizontal={16}
                   backgroundColor={userType === 'courier' ? '$primary' : '$background'}
                   color={userType === 'courier' ? 'white' : '$secondary'}
-                  onPress={() => setUserType('courier')}
+                  fontSize={14}
                   fontWeight="bold"
+                  onPress={() => setUserType('courier')}
                 >
                   Deliver Packages
                 </Button>
@@ -138,13 +144,12 @@ export default function Register() {
                   borderRadius="$3"
                 >
                   <User size={20} color="#4F5D75" />
-                  <Input
-                    flex={1}
+                  <TextInput
+                    style={{ flex: 1, fontSize: 16, color: '#000', padding: 0 }}
                     placeholder="John Doe"
+                    placeholderTextColor="#999"
                     value={formData.name}
-                  onChangeText={(text: string) => setFormData({ ...formData, name: text })}
-                    borderWidth={0}
-                    backgroundColor="transparent"
+                    onChangeText={(text: string) => setFormData({ ...formData, name: text })}
                   />
                 </XStack>
               </YStack>
@@ -162,15 +167,14 @@ export default function Register() {
                   borderRadius="$3"
                 >
                   <Mail size={20} color="#4F5D75" />
-                  <Input
-                    flex={1}
+                  <TextInput
+                    style={{ flex: 1, fontSize: 16, color: '#000', padding: 0 }}
                     placeholder="your@email.com"
+                    placeholderTextColor="#999"
                     value={formData.email}
-                  onChangeText={(text: string) => setFormData({ ...formData, email: text })}
+                    onChangeText={(text: string) => setFormData({ ...formData, email: text })}
                     keyboardType="email-address"
                     autoCapitalize="none"
-                    borderWidth={0}
-                    backgroundColor="transparent"
                   />
                 </XStack>
               </YStack>
@@ -188,14 +192,13 @@ export default function Register() {
                   borderRadius="$3"
                 >
                   <Phone size={20} color="#4F5D75" />
-                  <Input
-                    flex={1}
+                  <TextInput
+                    style={{ flex: 1, fontSize: 16, color: '#000', padding: 0 }}
                     placeholder="+1234567890"
+                    placeholderTextColor="#999"
                     value={formData.phone}
-                  onChangeText={(text: string) => setFormData({ ...formData, phone: text })}
+                    onChangeText={(text: string) => setFormData({ ...formData, phone: text })}
                     keyboardType="phone-pad"
-                    borderWidth={0}
-                    backgroundColor="transparent"
                   />
                 </XStack>
               </YStack>
@@ -213,14 +216,13 @@ export default function Register() {
                   borderRadius="$3"
                 >
                   <Lock size={20} color="#4F5D75" />
-                  <Input
-                    flex={1}
+                  <TextInput
+                    style={{ flex: 1, fontSize: 16, color: '#000', padding: 0 }}
                     placeholder="Create a strong password"
+                    placeholderTextColor="#999"
                     value={formData.password}
-                  onChangeText={(text: string) => setFormData({ ...formData, password: text })}
+                    onChangeText={(text: string) => setFormData({ ...formData, password: text })}
                     secureTextEntry
-                    borderWidth={0}
-                    backgroundColor="transparent"
                   />
                 </XStack>
               </YStack>
@@ -236,16 +238,17 @@ export default function Register() {
                     <Text fontSize="$4" fontWeight="bold">
                       Motorcycle Model *
                     </Text>
-                    <Input
+                    <TextInput
+                      style={{ borderWidth: 1, borderColor: '#ddd', borderRadius: 8, padding: 12, fontSize: 16, color: '#000' }}
                       placeholder="e.g. Honda CB500X"
+                      placeholderTextColor="#999"
                       value={formData.vehicleInfo?.model}
-                    onChangeText={(text: string) =>
+                      onChangeText={(text: string) =>
                         setFormData({
                           ...formData,
                           vehicleInfo: { ...formData.vehicleInfo!, model: text },
                         })
                       }
-                      backgroundColor="$background"
                     />
                   </YStack>
 
@@ -253,16 +256,17 @@ export default function Register() {
                     <Text fontSize="$4" fontWeight="bold">
                       Plate Number *
                     </Text>
-                    <Input
+                    <TextInput
+                      style={{ borderWidth: 1, borderColor: '#ddd', borderRadius: 8, padding: 12, fontSize: 16, color: '#000' }}
                       placeholder="ABC123"
+                      placeholderTextColor="#999"
                       value={formData.vehicleInfo?.plateNumber}
-                    onChangeText={(text: string) =>
+                      onChangeText={(text: string) =>
                         setFormData({
                           ...formData,
                           vehicleInfo: { ...formData.vehicleInfo!, plateNumber: text },
                         })
                       }
-                      backgroundColor="$background"
                       autoCapitalize="characters"
                     />
                   </YStack>
@@ -271,26 +275,31 @@ export default function Register() {
                     <Text fontSize="$4" fontWeight="bold">
                       Color
                     </Text>
-                    <Input
+                    <TextInput
+                      style={{ borderWidth: 1, borderColor: '#ddd', borderRadius: 8, padding: 12, fontSize: 16, color: '#000' }}
                       placeholder="Red"
+                      placeholderTextColor="#999"
                       value={formData.vehicleInfo?.color}
-                    onChangeText={(text: string) =>
+                      onChangeText={(text: string) =>
                         setFormData({
                           ...formData,
                           vehicleInfo: { ...formData.vehicleInfo!, color: text },
                         })
                       }
-                      backgroundColor="$background"
                     />
                   </YStack>
                 </>
               )}
 
               <Button
-                size="$5"
+                width="100%"
+                height={50}
+                paddingVertical={12}
+                paddingHorizontal={20}
                 backgroundColor="$primary"
                 color="white"
                 fontWeight="bold"
+                fontSize={16}
                 onPress={handleRegister}
                 disabled={loading}
                 pressStyle={{ backgroundColor: '$primaryHover' }}

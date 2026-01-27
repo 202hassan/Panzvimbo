@@ -4,14 +4,17 @@ import { YStack, XStack, Text, Button, Card } from 'tamagui'
 import { Plus, Package } from '@tamagui/lucide-icons'
 import { useDispatch, useSelector } from 'react-redux'
 import { useRouter } from 'expo-router'
-import { RootState } from '../../store'
-import { setDeliveries } from '../../store/deliverySlice'
-import { deliveryService } from '../../services/deliverySlice'
-import JobCard from '../../components/JobCard'
+import { RootState } from '../../_store'
+import { setDeliveries } from '../../_store/deliverySlice'
+import { deliveryService } from '../../_services/deliverySlice'
+import JobCard from '../../_components/JobCard'
+
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 export default function HomeScreen() {
   const router = useRouter()
   const dispatch = useDispatch()
+  const insets = useSafeAreaInsets()
   const { deliveries } = useSelector((state: RootState) => state.delivery)
   const [refreshing, setRefreshing] = useState(false)
 
@@ -87,7 +90,7 @@ export default function HomeScreen() {
   }
 
   return (
-    <YStack flex={1} backgroundColor="$background" paddingTop="$4">
+    <YStack flex={1} backgroundColor="$background" paddingTop={insets.top}>
       {/* Header */}
       <XStack
         justifyContent="space-between"
@@ -109,10 +112,13 @@ export default function HomeScreen() {
       <XStack paddingHorizontal="$4" paddingBottom="$4">
         <Button
           flex={1}
+          height={50}
+          paddingVertical={12}
+          paddingHorizontal={20}
+          fontSize={16}
           backgroundColor="$primary"
           color="white"
           fontWeight="bold"
-          size="$5"
           icon={<Plus size={20} color="white" />}
           onPress={() => router.push('/(tabs)/create')}
           pressStyle={{ backgroundColor: '$primaryHover' }}

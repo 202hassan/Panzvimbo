@@ -1,7 +1,7 @@
 import React from 'react'
 import { Card, XStack, YStack, Text, Button, Avatar } from 'tamagui'
 import { Star, Clock, Bike } from '@tamagui/lucide-icons'
-import { Bid } from '../store/deliverySlice'
+import { Bid } from '../_store/deliverySlice'
 
 interface BidCardProps {
   bid: Bid
@@ -76,6 +76,11 @@ export default function BidCard({ bid, onAccept, isAccepted }: BidCardProps) {
         {/* Accept Button */}
         {onAccept && !isAccepted && (
           <Button
+            width="100%"
+            height={42}
+            paddingVertical={10}
+            paddingHorizontal={16}
+            fontSize={14}
             backgroundColor="$primary"
             color="white"
             fontWeight="bold"

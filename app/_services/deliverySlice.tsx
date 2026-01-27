@@ -1,5 +1,5 @@
 import api from './api'
-import { Delivery, Bid } from '../store/deliverySlice'
+import { Delivery, Bid } from '../_store/deliverySlice'
 
 export interface CreateDeliveryData {
   pickupLocation: {

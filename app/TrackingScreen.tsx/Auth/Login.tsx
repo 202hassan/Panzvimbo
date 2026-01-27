@@ -1,15 +1,17 @@
 import React, { useState } from 'react'
-import { Alert, ScrollView, KeyboardAvoidingView, Platform, Image } from 'react-native'
-import { YStack, XStack, Text, Input, Button, Card } from 'tamagui'
+import { Alert, ScrollView, KeyboardAvoidingView, Platform, Image, TextInput } from 'react-native'
+import { YStack, XStack, Text, Button, Card } from 'tamagui'
 import { Mail, Lock } from '@tamagui/lucide-icons'
 import { useRouter } from 'expo-router'
 import { useDispatch } from 'react-redux'
-import { setUser, setToken } from '../../store/userSlice'
-import { authService } from '../../services/authService'
+import { setUser, setToken } from '../../_store/userSlice'
+import { authService } from '../../_services/authService'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 export default function Login() {
   const router = useRouter()
   const dispatch = useDispatch()
+  const insets = useSafeAreaInsets()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
@@ -48,8 +50,8 @@ export default function Login() {
       style={{ flex: 1 }}
     >
       <ScrollView
-        contentContainerStyle={{ flexGrow: 1 }}
-        style={{ backgroundColor: '#fff' }}
+        contentContainerStyle={{ flexGrow: 1, paddingTop: insets.top, paddingBottom: insets.bottom }}
+        style={{ backgroundColor: '#ffffff' }}
       >
         <YStack flex={1} padding="$6" justifyContent="center" space="$6">
           {/* Logo/Brand */}
@@ -83,19 +85,19 @@ export default function Login() {
                   space="$2"
                   alignItems="center"
                   backgroundColor="$background"
-                  padding="$3"
-                  borderRadius="$3"
+                  paddingHorizontal={12}
+                  paddingVertical={10}
+                  borderRadius={8}
                 >
                   <Mail size={20} color="#4F5D75" />
-                  <Input
-                    flex={1}
+                  <TextInput
+                    style={{ flex: 1, fontSize: 16, padding: 0 }}
                     placeholder="your@email.com"
                     value={email}
                     onChangeText={setEmail}
                     keyboardType="email-address"
                     autoCapitalize="none"
-                    borderWidth={0}
-                    backgroundColor="transparent"
+                    placeholderTextColor="#999"
                   />
                 </XStack>
               </YStack>
@@ -108,27 +110,31 @@ export default function Login() {
                   space="$2"
                   alignItems="center"
                   backgroundColor="$background"
-                  padding="$3"
-                  borderRadius="$3"
+                  paddingHorizontal={12}
+                  paddingVertical={10}
+                  borderRadius={8}
                 >
                   <Lock size={20} color="#4F5D75" />
-                  <Input
-                    flex={1}
+                  <TextInput
+                    style={{ flex: 1, fontSize: 16, padding: 0 }}
                     placeholder="Enter your password"
                     value={password}
                     onChangeText={setPassword}
                     secureTextEntry
-                    borderWidth={0}
-                    backgroundColor="transparent"
+                    placeholderTextColor="#999"
                   />
                 </XStack>
               </YStack>
 
               <Button
-                size="$5"
+                width="100%"
+                height={50}
+                paddingVertical={12}
+                paddingHorizontal={20}
                 backgroundColor="$primary"
                 color="white"
                 fontWeight="bold"
+                fontSize={16}
                 onPress={handleLogin}
                 disabled={loading}
                 pressStyle={{ backgroundColor: '$primaryHover' }}

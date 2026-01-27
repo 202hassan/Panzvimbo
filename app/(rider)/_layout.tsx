@@ -1,17 +1,14 @@
 import { Tabs } from 'expo-router'
-import { Home, User, PlusCircle, Package } from '@tamagui/lucide-icons'
-import { useTheme } from 'tamagui'
+import { Home, User, List, Bike } from '@tamagui/lucide-icons'
 
-export default function TabLayout() {
-  const theme = useTheme()
-
+export default function RiderTabLayout() {
   return (
     <Tabs
       screenOptions={{
         headerShown: false,
         tabBarStyle: {
           backgroundColor: '#ffffff',
-          borderTopColor: '#eaf1f8', // gray100
+          borderTopColor: '#eaf1f8',
           elevation: 8,
           shadowColor: '#000',
           shadowOffset: { width: 0, height: -2 },
@@ -37,12 +34,17 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="create"
+        name="jobs"
         options={{
-          title: 'New Delivery',
-          tabBarIcon: ({ color, size }) => <PlusCircle color={color} size={40} />,
-          tabBarLabelStyle: { display: 'none' }, // Hide label for center button
-          tabBarItemStyle: { bottom: 15 }, // Raise the center button
+          title: 'Jobs',
+          tabBarIcon: ({ color, size }) => <List color={color} size={size} />,
+        }}
+      />
+      <Tabs.Screen
+        name="bids"
+        options={{
+          title: 'My Bids',
+          tabBarIcon: ({ color, size }) => <Bike color={color} size={size} />,
         }}
       />
       <Tabs.Screen

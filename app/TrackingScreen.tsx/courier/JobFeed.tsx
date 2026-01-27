@@ -1,19 +1,21 @@
 import React, { useEffect, useState } from 'react'
-import { FlatList, RefreshControl, Alert } from 'react-native'
-import { YStack, Text, Card, Input, XStack, Button, Dialog } from 'tamagui'
+import { FlatList, RefreshControl, Alert, TextInput } from 'react-native'
+import { YStack, Text, Card, XStack, Button, Dialog } from 'tamagui'
 import { Search, Filter } from '@tamagui/lucide-icons'
 import { useRouter } from 'expo-router'
 import { useDispatch, useSelector } from 'react-redux'
-import { RootState } from '../../store'
-import { setDeliveries } from '../../store/deliverySlice'
-import { deliveryService, CreateBidData } from '../../services/deliverySlice'
-import { Delivery } from '../../store/deliverySlice'
-import JobCard from '../../components/JobCard'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import { RootState } from '../../_store'
+import { setDeliveries } from '../../_store/deliverySlice'
+import { deliveryService, CreateBidData } from '../../_services/deliverySlice'
+import { Delivery } from '../../_store/deliverySlice'
+import JobCard from '../../_components/JobCard'
 import * as Location from 'expo-location'
 
 export default function JobFeed() {
   const router = useRouter()
   const dispatch = useDispatch()
+  const insets = useSafeAreaInsets()
   const { deliveries } = useSelector((state: RootState) => state.delivery)
   const { currentUser } = useSelector((state: RootState) => state.user)
   const [refreshing, setRefreshing] = useState(false)
@@ -39,7 +41,106 @@ export default function JobFeed() {
       })
       dispatch(setDeliveries(jobs))
     } catch (error) {
-      console.error('Failed to fetch jobs:', error)
+      // Use mock data for demo purposes (no error logging to UI)
+      const mockJobs: Delivery[] = [
+        {
+          id: 'job-1',
+          clientId: 'client-1',
+          clientName: 'Sarah Johnson',
+          pickupLocation: {
+            latitude: -17.8252,
+            longitude: 31.0335,
+            address: '123 Harare Dr, Borrowdale'
+          },
+          dropoffLocation: {
+            latitude: -17.8216,
+            longitude: 31.0492,
+            address: '456 Samora Machel Ave, CBD'
+          },
+          packageDetails: {
+            description: 'Important Documents - Urgent',
+            size: 'small',
+            weight: 0.5
+          },
+          status: 'pending',
+          bids: [],
+          createdAt: new Date().toISOString(),
+          suggestedPrice: 35.00
+        },
+        {
+          id: 'job-2',
+          clientId: 'client-2',
+          clientName: 'John Smith',
+          pickupLocation: {
+            latitude: -17.7840,
+            longitude: 31.0020,
+            address: 'Westgate Shopping Mall'
+          },
+          dropoffLocation: {
+            latitude: -17.8000,
+            longitude: 31.0400,
+            address: 'Avondale Shops'
+          },
+          packageDetails: {
+            description: 'Electronics Package',
+            size: 'medium',
+            weight: 2.5
+          },
+          status: 'pending',
+          bids: [],
+          createdAt: new Date().toISOString(),
+          suggestedPrice: 45.00
+        },
+        {
+          id: 'job-3',
+          clientId: 'client-3',
+          clientName: 'Emma Wilson',
+          pickupLocation: {
+            latitude: -17.8500,
+            longitude: 31.0600,
+            address: 'Highlands Shopping Centre'
+          },
+          dropoffLocation: {
+            latitude: -17.8100,
+            longitude: 31.0200,
+            address: 'Rekai Tangwena Ave'
+          },
+          packageDetails: {
+            description: 'Fragile Items - Handle with Care',
+            size: 'small',
+            weight: 1.0
+          },
+          status: 'pending',
+          bids: [],
+          createdAt: new Date().toISOString(),
+          suggestedPrice: 28.00
+        },
+        {
+          id: 'job-4',
+          clientId: 'client-4',
+          clientName: 'Michael Brown',
+          pickupLocation: {
+            latitude: -17.7950,
+            longitude: 31.0450,
+            address: 'Meikles Hotel'
+          },
+          dropoffLocation: {
+            latitude: -17.8350,
+            longitude: 31.0350,
+            address: 'Enterprise Road'
+          },
+          packageDetails: {
+            description: 'Office Supplies',
+            size: 'large',
+            weight: 5.0
+          },
+          status: 'pending',
+          bids: [],
+          createdAt: new Date().toISOString(),
+          suggestedPrice: 55.00
+        }
+      ]
+      dispatch(setDeliveries(mockJobs))
     }
   }
 
@@ -93,9 +194,9 @@ export default function JobFeed() {
   )
 
   return (
-    <YStack flex={1} backgroundColor="$background" paddingTop="$4">
+    <YStack flex={1} backgroundColor="$background" paddingTop={insets.top}>
       {/* Header */}
-      <YStack paddingHorizontal="$4" paddingBottom="$4" space="$3">
+      <YStack paddingHorizontal="$4" paddingTop="$4" paddingBottom="$4" space="$3">
         <Text fontSize="$8" fontWeight="bold">
           Available Jobs
         </Text>
@@ -103,15 +204,14 @@ export default function JobFeed() {
         {/* Search Bar */}
         <XStack space="$2" alignItems="center">
           <Card flex={1} padding="$0" backgroundColor="$cardBackground">
-            <XStack alignItems="center" paddingHorizontal="$3">
+            <XStack alignItems="center" paddingHorizontal={12}>
               <Search size={20} color="#4F5D75" />
-              <Input
-                flex={1}
+              <TextInput
+                style={{ flex: 1, fontSize: 16, padding: 12, color: '#000' }}
                 placeholder="Search deliveries..."
                 value={searchQuery}
                 onChangeText={setSearchQuery}
-                borderWidth={0}
-                backgroundColor="transparent"
+                placeholderTextColor="#999"
               />
             </XStack>
           </Card>
@@ -130,7 +230,7 @@ export default function JobFeed() {
           data={filteredJobs}
           renderItem={({ item }) => <JobCard delivery={item} onBid={handleBid} />}
           keyExtractor={(item) => item.id}
-          contentContainerStyle={{ paddingHorizontal: 16 }}
+          contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: insets.bottom + 16 }}
           refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
         />
       ) : (
@@ -174,11 +274,20 @@ export default function JobFeed() {
                 <Text fontSize="$4" fontWeight="bold">
                   Your Bid Amount ($) *
                 </Text>
-                <Input
+                <TextInput
+                  style={{
+                    borderWidth: 1,
+                    borderColor: '#ddd',
+                    borderRadius: 8,
+                    padding: 12,
+                    fontSize: 16,
+                    color: '#000',
+                  }}
                   placeholder="Enter amount"
                   value={bidAmount}
                   onChangeText={setBidAmount}
                   keyboardType="numeric"
+                  placeholderTextColor="#999"
                 />
               </YStack>
 
@@ -186,11 +295,20 @@ export default function JobFeed() {
                 <Text fontSize="$4" fontWeight="bold">
                   Estimated Time (minutes) *
                 </Text>
-                <Input
+                <TextInput
+                  style={{
+                    borderWidth: 1,
+                    borderColor: '#ddd',
+                    borderRadius: 8,
+                    padding: 12,
+                    fontSize: 16,
+                    color: '#000',
+                  }}
                   placeholder="Enter estimated time"
                   value={estimatedTime}
                   onChangeText={setEstimatedTime}
                   keyboardType="numeric"
+                  placeholderTextColor="#999"
                 />
               </YStack>
 
@@ -198,18 +316,32 @@ export default function JobFeed() {
                 <Text fontSize="$4" fontWeight="bold">
                   Message (Optional)
                 </Text>
-                <Input
+                <TextInput
+                  style={{
+                    borderWidth: 1,
+                    borderColor: '#ddd',
+                    borderRadius: 8,
+                    padding: 12,
+                    fontSize: 16,
+                    color: '#000',
+                    textAlignVertical: 'top',
+                  }}
                   placeholder="Add a message to stand out..."
                   value={bidMessage}
                   onChangeText={setBidMessage}
                   multiline
                   numberOfLines={3}
+                  placeholderTextColor="#999"
                 />
               </YStack>
 
               <XStack space="$2" marginTop="$2">
                 <Button
                   flex={1}
+                  height={42}
+                  paddingVertical={10}
+                  paddingHorizontal={16}
+                  fontSize={14}
                   backgroundColor="$cardBackground"
                   color="$secondary"
                   onPress={() => setShowBidDialog(false)}
@@ -218,6 +350,10 @@ export default function JobFeed() {
                 </Button>
                 <Button
                   flex={1}
+                  height={42}
+                  paddingVertical={10}
+                  paddingHorizontal={16}
+                  fontSize={14}
                   backgroundColor="$primary"
                   color="white"
                   fontWeight="bold"

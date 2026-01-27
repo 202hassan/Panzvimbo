@@ -4,12 +4,14 @@ import { YStack, XStack, Text, Card, Button } from 'tamagui'
 import { Bike, DollarSign, Star, TrendingUp } from '@tamagui/lucide-icons'
 import { useRouter } from 'expo-router'
 import { useSelector } from 'react-redux'
-import { RootState } from '../../store'
+import { RootState } from '../../_store'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 export default function CourierHome() {
   const router = useRouter()
   const { currentUser } = useSelector((state: RootState) => state.user)
   const { activeDelivery } = useSelector((state: RootState) => state.delivery)
+  const insets = useSafeAreaInsets()
   const [refreshing, setRefreshing] = useState(false)
   const [stats, setStats] = useState({
     totalEarnings: 0,
@@ -26,10 +28,10 @@ export default function CourierHome() {
 
   return (
     <ScrollView
-      style={{ flex: 1, backgroundColor: '#fff' }}
+      style={{ flex: 1, backgroundColor: '#ffffff' }}
       refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
     >
-      <YStack padding="$4" space="$4">
+      <YStack padding="$4" space="$4" paddingTop={insets.top + 16} paddingBottom={insets.bottom + 16}>
         {/* Header */}
         <YStack space="$2">
           <Text fontSize="$8" fontWeight="bold">
@@ -102,6 +104,10 @@ export default function CourierHome() {
                 You have an ongoing delivery
               </Text>
               <Button
+                height={44}
+                paddingVertical={10}
+                paddingHorizontal={16}
+                fontSize={14}
                 backgroundColor="white"
                 color="$primary"
                 fontWeight="bold"
@@ -123,10 +129,14 @@ export default function CourierHome() {
                   Browse available delivery jobs and place your bids
                 </Text>
                 <Button
+                  width="100%"
+                  height={50}
+                  paddingVertical={12}
+                  paddingHorizontal={20}
+                  fontSize={16}
                   backgroundColor="$primary"
                   color="white"
                   fontWeight="bold"
-                  size="$5"
                   onPress={() => router.push('/TrackingScreen.tsx/courier/JobFeed')}
                   pressStyle={{ backgroundColor: '$primaryHover' }}
                 >
@@ -145,6 +155,11 @@ export default function CourierHome() {
                   Track your bids and wait for client responses
                 </Text>
                 <Button
+                  width="100%"
+                  height={44}
+                  paddingVertical={10}
+                  paddingHorizontal={16}
+                  fontSize={14}
                   backgroundColor="$secondary"
                   color="white"
                   fontWeight="bold"
