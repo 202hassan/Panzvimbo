@@ -2,6 +2,7 @@ import api from './api'
 import { Delivery, Bid } from '../_store/deliverySlice'
 
 export interface CreateDeliveryData {
+  clientId?: string
   pickupLocation: {
     latitude: number
     longitude: number
@@ -32,7 +33,11 @@ export const deliveryService = {
   // Client endpoints
   createDelivery: async (data: CreateDeliveryData) => {
     try {
-      const response = await api.post('/deliveries', data)
+      const response = await api.post('/deliveries', {
+        ...data,
+        // backend requires a numeric suggestedPrice
+        suggestedPrice: data.suggestedPrice ?? 0,
+      })
       return response.data
     } catch (error: any) {
       throw error.response?.data?.message || 'Failed to create delivery'

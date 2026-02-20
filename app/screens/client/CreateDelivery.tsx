@@ -3,8 +3,9 @@ import { ScrollView, Alert, TextInput } from 'react-native'
 import { YStack, XStack, Text, Button, Card, Select } from 'tamagui'
 import { MapPin, Package, DollarSign, ChevronDown } from '@tamagui/lucide-icons'
 import { useRouter } from 'expo-router'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { addDelivery } from '../../_store/deliverySlice'
+import type { RootState } from '../../_store'
 import { deliveryService, CreateDeliveryData } from '../../_services/deliverySlice'
 import * as Location from 'expo-location'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
@@ -12,6 +13,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 export default function CreateDelivery() {
   const router = useRouter()
   const dispatch = useDispatch()
+  const currentUser = useSelector((state: RootState) => state.user.currentUser)
   const insets = useSafeAreaInsets()
   const [loading, setLoading] = useState(false)
 
@@ -65,6 +67,10 @@ export default function CreateDelivery() {
   }
 
   const handleSubmit = async () => {
+    if (!currentUser) {
+      Alert.alert('Not logged in', 'Please log in before creating a delivery')
+      return
+    }
     // Validation
     if (!formData.pickupLocation.address || !formData.dropoffLocation.address) {
       Alert.alert('Error', 'Please select pickup and dropoff locations')
@@ -78,8 +84,12 @@ export default function CreateDelivery() {
 
     setLoading(true)
     try {
-      const newDelivery = await deliveryService.createDelivery(formData)
-      dispatch(addDelivery(newDelivery))
+      const newDelivery = await deliveryService.createDelivery({
+        ...formData,
+        clientId: currentUser.id,
+      })
+      // newDelivery comes from the backend (Mongo _id etc.). For now we just store it as-is.
+      dispatch(addDelivery(newDelivery as any))
       Alert.alert('Success', 'Delivery request created! Couriers can now bid on it.')
       router.back()
     } catch (error: any) {

@@ -17,31 +17,29 @@ export default function Login() {
   const [loading, setLoading] = useState(false)
 
   const handleLogin = async () => {
-    // Skip validation - allow login without credentials
-    setLoading(true)
-    
-    // Mock user data for quick access
-    const mockUser = {
-      id: 'demo-user',
-      name: 'Demo User',
-      email: email || 'demo@panzvimbo.com',
-      userType: 'client' // Change to 'courier' if you want courier view
+    if (!email || !password) {
+      Alert.alert('Error', 'Please enter email and password')
+      return
     }
-    
-    const mockToken = 'demo-token-' + Date.now()
-    
-    dispatch(setUser(mockUser))
-    dispatch(setToken(mockToken))
-    
-    setTimeout(() => {
-      setLoading(false)
-      // Navigate based on user type
-      if (mockUser.userType === 'client') {
+
+    setLoading(true)
+    try {
+      const result = await authService.login({ email, password })
+
+      dispatch(setUser(result.user))
+      dispatch(setToken(result.token))
+
+      // Navigate based on real user type from backend
+      if (result.user.userType === 'client') {
         router.replace('/(tabs)')
       } else {
         router.replace('/TrackingScreen.tsx/courier/CourierHome')
       }
-    }, 500)
+    } catch (err: any) {
+      Alert.alert('Login failed', err.toString())
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
