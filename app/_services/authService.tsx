@@ -70,4 +70,27 @@ export const authService = {
       throw error.response?.data?.message || 'Failed to update profile'
     }
   },
+
+  guestLogin: async (userType: 'client' | 'courier' = 'client') => {
+    try {
+      // Generate a guest token without backend authentication
+      const guestToken = `guest_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+      await AsyncStorage.setItem('userToken', guestToken)
+      
+      // Return guest user data
+      return {
+        token: guestToken,
+        user: {
+          id: `guest_${Date.now()}`,
+          name: 'Guest User',
+          email: `guest_${Date.now()}@panzvimbo.local`,
+          phone: '',
+          userType: userType,
+          isGuest: true,
+        },
+      }
+    } catch (error: any) {
+      throw error.response?.data?.message || 'Guest login failed'
+    }
+  },
 }

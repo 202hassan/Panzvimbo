@@ -17,8 +17,9 @@ export default function Login() {
   const [loading, setLoading] = useState(false)
 
   const handleLogin = async () => {
-    if (!email || !password) {
-      Alert.alert('Error', 'Please enter email and password')
+    // DEV MODE: Accept empty credentials and log in as guest
+    if (!email && !password) {
+      handleGuestLogin('client')
       return
     }
 
@@ -37,6 +38,27 @@ export default function Login() {
       }
     } catch (err: any) {
       Alert.alert('Login failed', err.toString())
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleGuestLogin = async (userType: 'client' | 'courier') => {
+    setLoading(true)
+    try {
+      const result = await authService.guestLogin(userType)
+
+      dispatch(setUser(result.user))
+      dispatch(setToken(result.token))
+
+      // Navigate based on user type
+      if (userType === 'client') {
+        router.replace('/(tabs)')
+      } else {
+        router.replace('/TrackingScreen.tsx/courier/CourierHome')
+      }
+    } catch (err: any) {
+      Alert.alert('Guest login failed', err.toString())
     } finally {
       setLoading(false)
     }
