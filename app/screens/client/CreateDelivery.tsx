@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { ScrollView, Alert, TextInput } from 'react-native'
 import { YStack, XStack, Text, Button, Card, Select } from 'tamagui'
 import { MapPin, Package, DollarSign, ChevronDown } from '@tamagui/lucide-icons'
-import { useRouter } from 'expo-router'
+import { useRouter, useLocalSearchParams } from 'expo-router'
 import { useDispatch, useSelector } from 'react-redux'
 import { addDelivery } from '../../_store/deliverySlice'
 import type { RootState } from '../../_store'
@@ -16,20 +16,32 @@ export default function CreateDelivery() {
   const currentUser = useSelector((state: RootState) => state.user.currentUser)
   const insets = useSafeAreaInsets()
   const [loading, setLoading] = useState(false)
+  const params = useLocalSearchParams<{
+    pickupAddress?: string
+    pickupLat?: string
+    pickupLng?: string
+    dropoffAddress?: string
+    dropoffLat?: string
+    dropoffLng?: string
+    distanceText?: string
+    durationText?: string
+  }>()
 
   const [formData, setFormData] = useState<CreateDeliveryData>({
     pickupLocation: {
-      latitude: 0,
-      longitude: 0,
-      address: '',
+      latitude: params.pickupLat ? parseFloat(String(params.pickupLat)) : 0,
+      longitude: params.pickupLng ? parseFloat(String(params.pickupLng)) : 0,
+      address: (params.pickupAddress as string) || '',
     },
     dropoffLocation: {
-      latitude: 0,
-      longitude: 0,
-      address: '',
+      latitude: params.dropoffLat ? parseFloat(String(params.dropoffLat)) : 0,
+      longitude: params.dropoffLng ? parseFloat(String(params.dropoffLng)) : 0,
+      address: (params.dropoffAddress as string) || '',
     },
     packageDetails: {
-      description: '',
+      description: params.distanceText && params.durationText
+        ? `Route: ${params.distanceText}, approx. ${params.durationText}`
+        : '',
       size: 'medium',
     },
     suggestedPrice: undefined,

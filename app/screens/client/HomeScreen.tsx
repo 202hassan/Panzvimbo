@@ -1,28 +1,45 @@
 import React, { useRef, useState, useEffect } from "react";
-import { View, StyleSheet, Dimensions, ActivityIndicator } from "react-native";
-import MapView, { Marker, Polyline } from "react-native-maps";
+import { View, StyleSheet, Dimensions, ActivityIndicator, Alert, Text, TouchableOpacity } from "react-native";
+import MapView, { Marker, Polyline, PROVIDER_GOOGLE } from "react-native-maps";
 import * as Location from "expo-location";
+import { GOOGLE_MAPS_API_KEY } from "../../_utils/mapsConfig";
+import type { LocationData } from "../../_types/location";
+import { useRouter } from "expo-router";
 
 import LocationInputCard from "../../components/LocationInputCard";
 import OffersBottomSheet, { OffersBottomSheetRef } from "../../components/OffersBottomSheet";
 
 const { width, height } = Dimensions.get("window");
 
+const DEFAULT_REGION = {
+  latitude: -17.8292,
+  longitude: 31.0522,
+  latitudeDelta: 0.05,
+  longitudeDelta: 0.05,
+};
+
 interface RouteCoords {
   latitude: number;
   longitude: number;
 }
 
+interface RouteInfo {
+  distanceText: string;
+  durationText: string;
+}
+
 export default function HomeScreen() {
   const mapRef = useRef<MapView>(null);
   const bottomSheetRef = useRef<OffersBottomSheetRef>(null);
+  const router = useRouter();
 
-  const [pickup, setPickup] = useState<any>(null);
-  const [dropoff, setDropoff] = useState<any>(null);
-  const [currentLocation, setCurrentLocation] = useState<any>(null);
+  const [pickup, setPickup] = useState<LocationData | null>(null);
+  const [dropoff, setDropoff] = useState<LocationData | null>(null);
+  const [currentLocation, setCurrentLocation] = useState<LocationData | null>(null);
   const [bids, setBids] = useState<any[]>([]);
   const [routeCoords, setRouteCoords] = useState<RouteCoords[]>([]);
   const [loading, setLoading] = useState(false);
+  const [routeInfo, setRouteInfo] = useState<RouteInfo | null>(null);
 
   // Get current location on component mount
   useEffect(() => {
@@ -73,15 +90,24 @@ export default function HomeScreen() {
   useEffect(() => {
     if (pickup && dropoff) {
       fetchRoute();
+    } else {
+      // Clear route if one of the locations is cleared/changed
+      setRouteCoords([]);
+      setRouteInfo(null);
     }
   }, [pickup, dropoff]);
 
   const fetchRoute = async () => {
     setLoading(true);
     try {
-      // Using Google Maps Directions API
-      // You'll need to add your GOOGLE_MAPS_API_KEY to your environment
-      const GOOGLE_MAPS_API_KEY = "YOUR_GOOGLE_MAPS_API_KEY";
+      if (!GOOGLE_MAPS_API_KEY || GOOGLE_MAPS_API_KEY === "YOUR_GOOGLE_MAPS_API_KEY") {
+        console.warn("GOOGLE_MAPS_API_KEY is not set. Cannot fetch route.");
+        Alert.alert(
+          "Map configuration",
+          "Google Maps API key is not configured. Please update it to see the route."
+        );
+        return;
+      }
 
       const startPoint = `${pickup.coords.latitude},${pickup.coords.longitude}`;
       const endPoint = `${dropoff.coords.latitude},${dropoff.coords.longitude}`;
@@ -92,20 +118,46 @@ export default function HomeScreen() {
 
       const json = await response.json();
 
-      if (json.routes.length > 0) {
-        const points = decodePolyline(json.routes[0].overview_polyline.points);
-        setRouteCoords(points);
+      if (!json.routes || json.routes.length === 0) {
+        setRouteCoords([]);
+        setRouteInfo(null);
+        Alert.alert(
+          "No route found",
+          "We couldn't find a driving route between these locations. Try adjusting pickup or dropoff."
+        );
+        return;
+      }
 
-        // Fit map to show the entire route
-        if (mapRef.current && points.length > 0) {
-          mapRef.current.fitToCoordinates(points, {
-            edgePadding: { top: 150, right: 50, bottom: 150, left: 50 },
-            animated: true,
-          });
-        }
+      const route = json.routes[0];
+      const leg = route.legs && route.legs[0];
+
+      if (leg && leg.distance && leg.duration) {
+        setRouteInfo({
+          distanceText: leg.distance.text,
+          durationText: leg.duration.text,
+        });
+      } else {
+        setRouteInfo(null);
+      }
+
+      const points = decodePolyline(route.overview_polyline.points);
+      setRouteCoords(points);
+
+      // Fit map to show the entire route
+      if (mapRef.current && points.length > 0) {
+        mapRef.current.fitToCoordinates(points, {
+          edgePadding: { top: 150, right: 50, bottom: 150, left: 50 },
+          animated: true,
+        });
       }
     } catch (error) {
       console.error("Error fetching route:", error);
+      setRouteCoords([]);
+      setRouteInfo(null);
+      Alert.alert(
+        "Route error",
+        "Something went wrong while fetching the route. Please try again."
+      );
     } finally {
       setLoading(false);
     }
@@ -158,17 +210,34 @@ export default function HomeScreen() {
     // Route will be fetched automatically via useEffect
   };
 
+  const handleConfirmDelivery = () => {
+    if (!pickup || !dropoff || !routeInfo) {
+      Alert.alert("Incomplete trip", "Please select pickup and dropoff and wait for the route to load.");
+      return;
+    }
+
+    router.push({
+      pathname: "/(tabs)/create",
+      params: {
+        pickupAddress: pickup.address,
+        pickupLat: String(pickup.coords.latitude),
+        pickupLng: String(pickup.coords.longitude),
+        dropoffAddress: dropoff.address,
+        dropoffLat: String(dropoff.coords.latitude),
+        dropoffLng: String(dropoff.coords.longitude),
+        distanceText: routeInfo.distanceText,
+        durationText: routeInfo.durationText,
+      },
+    });
+  };
+
   return (
     <View style={styles.container}>
       <MapView
         ref={mapRef}
         style={styles.map}
-        initialRegion={{
-          latitude: -17.8292,
-          longitude: 31.0522,
-          latitudeDelta: 0.05,
-          longitudeDelta: 0.05,
-        }}
+        provider={PROVIDER_GOOGLE}
+        initialRegion={DEFAULT_REGION}
       >
         {/* Current Location Pin */}
         {currentLocation && (
@@ -217,6 +286,22 @@ export default function HomeScreen() {
         </View>
       )}
 
+      {routeInfo && (
+        <View style={styles.routeInfoContainer}>
+          <Text style={styles.routeInfoText}>
+            {routeInfo.distanceText} • {routeInfo.durationText}
+          </Text>
+        </View>
+      )}
+
+      {pickup && dropoff && routeInfo && (
+        <View style={styles.confirmContainer}>
+          <TouchableOpacity style={styles.confirmButton} onPress={handleConfirmDelivery}>
+            <Text style={styles.confirmButtonText}>Confirm Delivery</Text>
+          </TouchableOpacity>
+        </View>
+      )}
+
       <LocationInputCard
         onPickupSelect={setPickup}
         onDropoffSelect={setDropoff}
@@ -244,5 +329,35 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(255, 255, 255, 0.9)",
     borderRadius: 50,
     padding: 20,
+  },
+  routeInfoContainer: {
+    position: "absolute",
+    top: 50,
+    alignSelf: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.75)",
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 20,
+  },
+  routeInfoText: {
+    color: "#fff",
+    fontSize: 14,
+    fontWeight: "600",
+  },
+  confirmContainer: {
+    position: "absolute",
+    bottom: 40,
+    alignSelf: "center",
+  },
+  confirmButton: {
+    backgroundColor: "#007AFF",
+    paddingHorizontal: 24,
+    paddingVertical: 12,
+    borderRadius: 24,
+  },
+  confirmButtonText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "600",
   },
 });

@@ -14,14 +14,8 @@ import {
   Platform,
 } from "react-native";
 import * as Location from "expo-location";
-
-interface LocationData {
-  coords: {
-    latitude: number;
-    longitude: number;
-  };
-  address: string;
-}
+import { GOOGLE_MAPS_API_KEY, DEFAULT_COUNTRY_CODE } from "../_utils/mapsConfig";
+import type { LocationData } from "../_types/location";
 
 interface LocationInputCardProps {
   onPickupSelect: (location: LocationData) => void;
@@ -88,8 +82,6 @@ export default function LocationInputCard({
     };
   }, [translateY]);
 
-  const GOOGLE_MAPS_API_KEY = "YOUR_GOOGLE_MAPS_API_KEY"; // Replace with your key
-
   const fetchPlacePredictions = async (input: string, isPickup: boolean) => {
     if (!input || input.length < 2) {
       isPickup ? setPickupPredictions([]) : setDropoffPredictions([]);
@@ -100,7 +92,9 @@ export default function LocationInputCard({
 
     try {
       const response = await fetch(
-        `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${input}&key=${GOOGLE_MAPS_API_KEY}&components=country:zw`
+        `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${encodeURIComponent(
+          input
+        )}&key=${GOOGLE_MAPS_API_KEY}&components=country:${DEFAULT_COUNTRY_CODE}`
       );
 
       const data = await response.json();
@@ -123,7 +117,9 @@ export default function LocationInputCard({
   const fetchCoordinates = async (placeId: string, isPickup: boolean) => {
     try {
       const response = await fetch(
-        `https://maps.googleapis.com/maps/api/place/details/json?place_id=${placeId}&key=${GOOGLE_MAPS_API_KEY}`
+        `https://maps.googleapis.com/maps/api/place/details/json?place_id=${encodeURIComponent(
+          placeId
+        )}&key=${GOOGLE_MAPS_API_KEY}`
       );
       const data = await response.json();
 
@@ -196,10 +192,28 @@ export default function LocationInputCard({
         style={styles.header}
       >
         <Text style={styles.headerText}>
-          {pickupSelected && dropoffSelected ? "✓ Locations Selected" : "Select Pickup & Dropoff"}
+          {pickupSelected && dropoffSelected ? "Trip summary" : "Select Pickup & Dropoff"}
         </Text>
         <Text style={styles.expandIcon}>{isExpanded ? "▼" : "▲"}</Text>
       </TouchableOpacity>
+
+      {!isExpanded && (
+        <View style={styles.compactSummary}>
+          {pickupSelected && (
+            <Text style={styles.compactLine} numberOfLines={1}>
+              From: {pickupSelected.address}
+            </Text>
+          )}
+          {dropoffSelected && (
+            <Text style={styles.compactLine} numberOfLines={1}>
+              To: {dropoffSelected.address}
+            </Text>
+          )}
+          {!pickupSelected && !dropoffSelected && (
+            <Text style={styles.compactHint}>Tap to choose pickup and dropoff</Text>
+          )}
+        </View>
+      )}
 
       {isExpanded && (
         <>
@@ -359,6 +373,17 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: "#007AFF",
     fontWeight: "bold",
+  },
+  compactSummary: {
+    marginBottom: 8,
+  },
+  compactLine: {
+    fontSize: 12,
+    color: "#555",
+  },
+  compactHint: {
+    fontSize: 12,
+    color: "#999",
   },
   inputSection: {
     marginBottom: 16,
