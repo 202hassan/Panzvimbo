@@ -14,8 +14,8 @@ export default function Register() {
   const [userType, setUserType] = useState<'client' | 'courier'>('client')
 
   const [formData, setFormData] = useState<RegisterData>({
-    name: '',
-    email: '',
+    name: '202hassan',
+    email: 'h230424r@hit.ac.zw',
     phone: '',
     password: '',
     userType: 'client',
